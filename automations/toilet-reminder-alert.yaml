@@ -1,1 +1,70 @@
+# ============================================================
+# PuppyOS - Toilet Reminder Alert
+# ============================================================
+#
+# PURPOSE:
+# Gives a spoken reminder when the puppy has not had garden
+# access for 2 hours.
+#
+# SAFETY / BEHAVIOUR:
+# - No reminder while the garden access door is open
+# - No reminders before 10:00
+# - No reminders after 22:00
+# - The reminder only fires once when the 2-hour threshold
+#   is crossed
+#
+# REQUIRED HELPER:
+#
+# input_datetime.puppy_last_outside
+#
+# REQUIRED SENSOR:
+#
+# binary_sensor.your_back_door_contact
+#
+# REQUIRED SPEAKER:
+#
+# media_player.your_speaker
+#
+# You MUST replace the example entity IDs with your own.
+#
+# ============================================================
 
+alias: PuppyOS - Toilet Reminder Alert
+description: >
+  Reminds the household to let the puppy outside when two hours
+  have passed since the garden access door was last closed.
+
+triggers:
+  - trigger: template
+    value_template: >
+      {% set last_outside = states('input_datetime.puppy_last_outside') %}
+      {{
+        is_state('binary_sensor.your_back_door_contact', 'off')
+        and last_outside not in ['unknown', 'unavailable', 'none', '']
+        and now().hour >= 10
+        and now().hour < 22
+        and as_timestamp(now()) >= (as_timestamp(last_outside) + 7200)
+      }}
+
+conditions: []
+
+actions:
+  - action: media_player.volume_set
+    target:
+      entity_id: media_player.your_speaker
+    data:
+      volume_level: 0.55
+    continue_on_error: true
+
+  - action: tts.speak
+    target:
+      entity_id: tts.google_translate_en_com
+    data:
+      media_player_entity_id: media_player.your_speaker
+      message: >
+        It has been two hours.
+        Please let the puppy outside for a toilet break.
+      cache: false
+    continue_on_error: true
+
+mode: single
