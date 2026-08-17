@@ -652,9 +652,13 @@ Using an affiliate link may provide a small commission to support the project wi
 
 # 📜 License
 
-A formal open-source license will be added to the repository.
+PuppyOS is open-source software released under the **MIT License**.
 
-Until then, please do not assume that the absence of a license grants unrestricted reuse or redistribution rights.
+You are free to use, copy, modify and redistribute PuppyOS, including adapting it for your own puppy, household or Home Assistant setup.
+
+See the full [MIT License](LICENSE) for details.
+
+If you build something useful from PuppyOS, we'd love to hear about it.
 
 ---
 
