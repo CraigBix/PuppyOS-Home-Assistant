@@ -1,1 +1,59 @@
+# ============================================================
+# PuppyOS - Garden Gate Safety
+# ============================================================
+#
+# PURPOSE:
+# Warns the household if the garden/side gate is open when
+# the puppy has access to the garden.
+#
+# HOW IT WORKS:
+# A contact sensor is fitted to:
+#   1. The door used to let the puppy into the garden
+#   2. The garden/side gate
+#
+# If the puppy's door opens while the gate is already open,
+# Home Assistant announces a warning over a speaker.
+#
+# You MUST replace the example entity IDs below with your own.
+# ============================================================
 
+alias: PuppyOS - Garden Gate Safety
+description: >
+  Warns when the puppy's garden access door is opened while
+  the garden gate is open.
+
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.your_back_door_contact
+    from: "off"
+    to: "on"
+
+conditions:
+  - condition: state
+    entity_id: binary_sensor.your_garden_gate_contact
+    state: "on"
+
+actions:
+
+  # Set the warning speaker volume
+  - action: media_player.volume_set
+    target:
+      entity_id: media_player.your_speaker
+    data:
+      volume_level: 0.65
+    continue_on_error: true
+
+  # Announce the warning
+  - action: tts.speak
+    target:
+      entity_id: tts.google_translate_en_com
+    data:
+      media_player_entity_id: media_player.your_speaker
+      message: >
+        Warning. The garden gate is open.
+        Please close the gate before letting the puppy outside.
+      cache: false
+    continue_on_error: true
+
+mode: single
