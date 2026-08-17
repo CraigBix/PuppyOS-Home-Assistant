@@ -1,2 +1,269 @@
-# PuppyOS feeding automation
-# Full generic version coming next
+# ============================================================
+# PuppyOS - Smart Feeding Tracker
+# ============================================================
+#
+# PURPOSE:
+# Automatically tracks a puppy's meals using a contact sensor
+# fitted to the food container.
+#
+# Designed for busy/shared households where more than one
+# person may feed the puppy.
+#
+# FEATURES:
+# - Food container opening automatically records a meal
+# - Tracks Breakfast, Lunch and Dinner separately
+# - Remembers the last meal and feeding time
+# - Warns if somebody tries to feed the puppy again too soon
+# - Prevents an accidental fourth meal
+#
+# IMPORTANT:
+# This example is configured for a puppy eating THREE meals
+# per day. Feeding requirements vary by puppy, age and diet.
+#
+# The example uses a 150-minute minimum interval between
+# recorded meals. Change this to suit your own feeding plan.
+#
+# You MUST replace the example entity IDs with your own.
+#
+# REQUIRED HELPERS:
+#
+# input_datetime.puppy_last_fed
+# input_datetime.puppy_breakfast_fed
+# input_datetime.puppy_lunch_fed
+# input_datetime.puppy_dinner_fed
+# input_text.puppy_last_meal
+#
+# REQUIRED SENSOR:
+#
+# binary_sensor.your_food_container_contact
+#
+# OPTIONAL:
+#
+# media_player.your_speaker
+# tts.google_translate_en_com
+#
+# ============================================================
+
+
+# ============================================================
+# AUTOMATION 1
+# FOOD CONTAINER / MEAL TRACKING
+# ============================================================
+
+alias: PuppyOS - Food Container Meal Tracker
+description: >
+  Records the puppy's meals when the food container is opened
+  and warns if another feeding is attempted too soon.
+
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.your_food_container_contact
+    from: "off"
+    to: "on"
+
+conditions: []
+
+actions:
+
+  # ----------------------------------------------------------
+  # READ EXISTING DATA BEFORE CHANGING ANY TIMESTAMPS
+  # ----------------------------------------------------------
+
+  - variables:
+      now_ts: "{{ as_timestamp(now()) }}"
+
+      last_fed_raw: "{{ states('input_datetime.puppy_last_fed') }}"
+
+      last_fed_ts: >
+        {% if last_fed_raw in ['unknown', 'unavailable', 'none', ''] %}
+          0
+        {% else %}
+          {{ as_timestamp(last_fed_raw) }}
+        {% endif %}
+
+      minutes_since_last_feed: >
+        {% if last_fed_ts | float(0) == 0 %}
+          9999
+        {% else %}
+          {{ ((now_ts | float - last_fed_ts | float) / 60) | int }}
+        {% endif %}
+
+      breakfast_today: >
+        {% set v = states('input_datetime.puppy_breakfast_fed') %}
+        {{
+          v not in ['unknown', 'unavailable', 'none', '']
+          and as_datetime(v).date() == now().date()
+        }}
+
+      lunch_today: >
+        {% set v = states('input_datetime.puppy_lunch_fed') %}
+        {{
+          v not in ['unknown', 'unavailable', 'none', '']
+          and as_datetime(v).date() == now().date()
+        }}
+
+      dinner_today: >
+        {% set v = states('input_datetime.puppy_dinner_fed') %}
+        {{
+          v not in ['unknown', 'unavailable', 'none', '']
+          and as_datetime(v).date() == now().date()
+        }}
+
+
+  # ----------------------------------------------------------
+  # DECIDE WHAT THE FOOD CONTAINER OPENING MEANS
+  # ----------------------------------------------------------
+
+  - choose:
+
+      # ======================================================
+      # TOO SOON SINCE LAST RECORDED FEED
+      # ======================================================
+
+      - conditions:
+          - condition: template
+            value_template: >
+              {{ minutes_since_last_feed | int < 150 }}
+
+        sequence:
+          - action: media_player.volume_set
+            target:
+              entity_id: media_player.your_speaker
+            data:
+              volume_level: 0.55
+            continue_on_error: true
+
+          - action: tts.speak
+            target:
+              entity_id: tts.google_translate_en_com
+            data:
+              media_player_entity_id: media_player.your_speaker
+              message: >
+                The puppy has already been fed.
+                Please don't feed them again yet.
+              cache: false
+            continue_on_error: true
+
+
+      # ======================================================
+      # ALL THREE MEALS HAVE ALREADY BEEN RECORDED TODAY
+      # ======================================================
+
+      - conditions:
+          - condition: template
+            value_template: >
+              {{
+                breakfast_today
+                and lunch_today
+                and dinner_today
+              }}
+
+        sequence:
+          - action: media_player.volume_set
+            target:
+              entity_id: media_player.your_speaker
+            data:
+              volume_level: 0.55
+            continue_on_error: true
+
+          - action: tts.speak
+            target:
+              entity_id: tts.google_translate_en_com
+            data:
+              media_player_entity_id: media_player.your_speaker
+              message: >
+                The puppy has already had all three meals today.
+              cache: false
+            continue_on_error: true
+
+
+      # ======================================================
+      # FIRST VALID FEED OF THE DAY = BREAKFAST
+      # ======================================================
+
+      - conditions:
+          - condition: template
+            value_template: "{{ not breakfast_today }}"
+
+        sequence:
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.puppy_breakfast_fed
+            data:
+              datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.puppy_last_fed
+            data:
+              datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.puppy_last_meal
+            data:
+              value: Breakfast
+
+
+      # ======================================================
+      # SECOND VALID FEED OF THE DAY = LUNCH
+      # ======================================================
+
+      - conditions:
+          - condition: template
+            value_template: >
+              {{ breakfast_today and not lunch_today }}
+
+        sequence:
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.puppy_lunch_fed
+            data:
+              datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.puppy_last_fed
+            data:
+              datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.puppy_last_meal
+            data:
+              value: Lunch
+
+
+      # ======================================================
+      # THIRD VALID FEED OF THE DAY = DINNER
+      # ======================================================
+
+      - conditions:
+          - condition: template
+            value_template: >
+              {{
+                breakfast_today
+                and lunch_today
+                and not dinner_today
+              }}
+
+        sequence:
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.puppy_dinner_fed
+            data:
+              datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.puppy_last_fed
+            data:
+              datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.puppy_last_meal
+            data:
+              value: Dinner
+
+mode: single
