@@ -1,0 +1,163 @@
+# ============================================================
+# PuppyOS - Missed Meal Reminders
+# ============================================================
+#
+# PURPOSE:
+# Reminds the household if the puppy has not been fed by the
+# expected meal times.
+#
+# This example is configured for THREE meals per day:
+#
+# Breakfast reminder: 10:30
+# Lunch reminder:     15:00
+# Dinner reminder:    19:30
+#
+# The automation checks the meal timestamp helpers created by
+# the PuppyOS feeding tracker.
+#
+# You MUST replace:
+#
+# media_player.your_speaker
+#
+# with the speaker you want to use.
+#
+# REQUIRED HELPERS:
+#
+# input_datetime.puppy_breakfast_fed
+# input_datetime.puppy_lunch_fed
+# input_datetime.puppy_dinner_fed
+#
+# OPTIONAL:
+#
+# tts.google_translate_en_com
+#
+# ============================================================
+
+alias: PuppyOS - Missed Meal Reminder
+description: >
+  Announces a reminder if the puppy's breakfast, lunch or dinner
+  has not been recorded by the expected time.
+
+triggers:
+  - trigger: time
+    at: "10:30:00"
+    id: breakfast
+
+  - trigger: time
+    at: "15:00:00"
+    id: lunch
+
+  - trigger: time
+    at: "19:30:00"
+    id: dinner
+
+conditions: []
+
+actions:
+  - choose:
+
+      # ======================================================
+      # BREAKFAST
+      # ======================================================
+      - conditions:
+          - condition: trigger
+            id: breakfast
+
+          - condition: template
+            value_template: >
+              {% set v = states('input_datetime.puppy_breakfast_fed') %}
+              {{
+                v in ['unknown', 'unavailable', 'none', '']
+                or as_datetime(v).date() != now().date()
+              }}
+
+        sequence:
+          - action: media_player.volume_set
+            target:
+              entity_id: media_player.your_speaker
+            data:
+              volume_level: 0.55
+            continue_on_error: true
+
+          - action: tts.speak
+            target:
+              entity_id: tts.google_translate_en_com
+            data:
+              media_player_entity_id: media_player.your_speaker
+              message: >
+                The puppy has not had breakfast yet.
+                They need feeding.
+              cache: false
+            continue_on_error: true
+
+
+      # ======================================================
+      # LUNCH
+      # ======================================================
+      - conditions:
+          - condition: trigger
+            id: lunch
+
+          - condition: template
+            value_template: >
+              {% set v = states('input_datetime.puppy_lunch_fed') %}
+              {{
+                v in ['unknown', 'unavailable', 'none', '']
+                or as_datetime(v).date() != now().date()
+              }}
+
+        sequence:
+          - action: media_player.volume_set
+            target:
+              entity_id: media_player.your_speaker
+            data:
+              volume_level: 0.55
+            continue_on_error: true
+
+          - action: tts.speak
+            target:
+              entity_id: tts.google_translate_en_com
+            data:
+              media_player_entity_id: media_player.your_speaker
+              message: >
+                The puppy has not had lunch yet.
+                They need feeding.
+              cache: false
+            continue_on_error: true
+
+
+      # ======================================================
+      # DINNER
+      # ======================================================
+      - conditions:
+          - condition: trigger
+            id: dinner
+
+          - condition: template
+            value_template: >
+              {% set v = states('input_datetime.puppy_dinner_fed') %}
+              {{
+                v in ['unknown', 'unavailable', 'none', '']
+                or as_datetime(v).date() != now().date()
+              }}
+
+        sequence:
+          - action: media_player.volume_set
+            target:
+              entity_id: media_player.your_speaker
+            data:
+              volume_level: 0.55
+            continue_on_error: true
+
+          - action: tts.speak
+            target:
+              entity_id: tts.google_translate_en_com
+            data:
+              media_player_entity_id: media_player.your_speaker
+              message: >
+                The puppy has not had dinner yet.
+                They need feeding.
+              cache: false
+            continue_on_error: true
+
+mode: single
