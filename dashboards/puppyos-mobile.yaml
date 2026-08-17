@@ -1,0 +1,899 @@
+# ============================================================
+# PuppyOS - Mobile Dashboard
+# ============================================================
+#
+# PURPOSE:
+# A compact mobile-first Home Assistant dashboard for PuppyOS.
+#
+# This version prioritises information you may want to check
+# quickly on a phone:
+#
+# - Breakfast / Lunch / Dinner
+# - Last fed
+# - Food container
+# - Last outside
+# - Toilet status
+# - Garden gate
+# - Back door
+# - Current weight
+# - Last weighed
+# - Vaccinations
+# - Parasite treatment
+# - Microchip
+# - Puppy camera
+#
+# Replace all example entity IDs with your own.
+#
+# CUSTOM CARDS USED:
+#
+# - Mushroom Cards
+# - Button Card
+# - Advanced Camera Card
+# - Card Mod
+#
+# ============================================================
+
+type: vertical-stack
+cards:
+
+  # ==========================================================
+  # HERO
+  # ==========================================================
+
+  - type: picture-elements
+    image: /local/puppy.jpg
+
+    elements:
+
+      - type: custom:button-card
+        show_name: false
+        show_icon: false
+
+        custom_fields:
+          title: |
+            [[[
+              return `🐾 PUPPY`;
+            ]]]
+
+        styles:
+          card:
+            - background: rgba(0,42,92,0.82)
+            - border: 1px solid rgba(254,77,0,0.70)
+            - border-radius: 14px
+            - padding: 7px 14px
+            - box-shadow: none
+
+          custom_fields:
+            title:
+              - color: white
+              - font-size: 24px
+              - font-weight: bold
+              - text-align: center
+
+        style:
+          top: 8%
+          left: 50%
+          width: 45%
+
+
+  # ==========================================================
+  # TODAY'S MEALS
+  # ==========================================================
+
+  - type: markdown
+    content: |
+      ## 🍽️ Today
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+        }
+
+
+  - type: grid
+    columns: 3
+    square: false
+
+    cards:
+
+      # ------------------------------------------------------
+      # BREAKFAST
+      # ------------------------------------------------------
+
+      - type: custom:mushroom-template-card
+        primary: Breakfast
+
+        secondary: |
+          {% set v = states('input_datetime.puppy_breakfast_fed') %}
+
+          {% if
+            v not in ['unknown','unavailable','none','']
+            and as_datetime(v).date() == now().date()
+          %}
+            {{ as_datetime(v).strftime('%H:%M') }}
+          {% else %}
+            Not yet
+          {% endif %}
+
+        icon: mdi:food-apple
+
+        icon_color: |
+          {% set v = states('input_datetime.puppy_breakfast_fed') %}
+
+          {% if
+            v not in ['unknown','unavailable','none','']
+            and as_datetime(v).date() == now().date()
+          %}
+            green
+          {% elif now().hour > 10 or (now().hour == 10 and now().minute >= 30) %}
+            red
+          {% else %}
+            grey
+          {% endif %}
+
+        layout: vertical
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      # ------------------------------------------------------
+      # LUNCH
+      # ------------------------------------------------------
+
+      - type: custom:mushroom-template-card
+        primary: Lunch
+
+        secondary: |
+          {% set v = states('input_datetime.puppy_lunch_fed') %}
+
+          {% if
+            v not in ['unknown','unavailable','none','']
+            and as_datetime(v).date() == now().date()
+          %}
+            {{ as_datetime(v).strftime('%H:%M') }}
+          {% else %}
+            Not yet
+          {% endif %}
+
+        icon: mdi:food
+
+        icon_color: |
+          {% set v = states('input_datetime.puppy_lunch_fed') %}
+
+          {% if
+            v not in ['unknown','unavailable','none','']
+            and as_datetime(v).date() == now().date()
+          %}
+            green
+          {% elif now().hour >= 15 %}
+            red
+          {% else %}
+            grey
+          {% endif %}
+
+        layout: vertical
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      # ------------------------------------------------------
+      # DINNER
+      # ------------------------------------------------------
+
+      - type: custom:mushroom-template-card
+        primary: Dinner
+
+        secondary: |
+          {% set v = states('input_datetime.puppy_dinner_fed') %}
+
+          {% if
+            v not in ['unknown','unavailable','none','']
+            and as_datetime(v).date() == now().date()
+          %}
+            {{ as_datetime(v).strftime('%H:%M') }}
+          {% else %}
+            Not yet
+          {% endif %}
+
+        icon: mdi:food-drumstick
+
+        icon_color: |
+          {% set v = states('input_datetime.puppy_dinner_fed') %}
+
+          {% if
+            v not in ['unknown','unavailable','none','']
+            and as_datetime(v).date() == now().date()
+          %}
+            green
+          {% elif now().hour > 19 or (now().hour == 19 and now().minute >= 30) %}
+            red
+          {% else %}
+            grey
+          {% endif %}
+
+        layout: vertical
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+  # ==========================================================
+  # FEEDING STATUS
+  # ==========================================================
+
+  - type: grid
+    columns: 2
+    square: false
+
+    cards:
+
+      - type: custom:mushroom-template-card
+        primary: Last Fed
+
+        secondary: |
+          {% set fed = states('input_datetime.puppy_last_fed') %}
+          {% set meal = states('input_text.puppy_last_meal') %}
+
+          {% if fed in ['unknown','unavailable','none',''] %}
+
+            No meal recorded
+
+          {% else %}
+
+            {% set mins =
+              ((as_timestamp(now()) - as_timestamp(fed)) / 60) | int
+            %}
+
+            {% if meal in ['unknown','unavailable','none',''] %}
+              {% set meal = 'Meal' %}
+            {% endif %}
+
+            {% if mins < 60 %}
+              {{ meal }} • {{ mins }} mins ago
+            {% else %}
+              {{ meal }} • {{ (mins / 60) | round(1) }} hrs ago
+            {% endif %}
+
+          {% endif %}
+
+        icon: mdi:food-drumstick
+        icon_color: green
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      - type: custom:mushroom-template-card
+        entity: binary_sensor.your_food_container_contact
+        primary: Food Container
+
+        secondary: |
+          {% if is_state('binary_sensor.your_food_container_contact','on') %}
+            OPEN
+          {% elif is_state('binary_sensor.your_food_container_contact','off') %}
+            CLOSED
+          {% else %}
+            Unavailable
+          {% endif %}
+
+        icon: mdi:jar
+
+        icon_color: |
+          {% if is_state('binary_sensor.your_food_container_contact','on') %}
+            orange
+          {% elif is_state('binary_sensor.your_food_container_contact','off') %}
+            green
+          {% else %}
+            grey
+          {% endif %}
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+  # ==========================================================
+  # OUTSIDE & SAFETY
+  # ==========================================================
+
+  - type: markdown
+    content: |
+      ## 🚪 Outside & Safety
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+        }
+
+
+  - type: grid
+    columns: 2
+    square: false
+
+    cards:
+
+      - type: custom:mushroom-template-card
+        primary: Last Outside
+
+        secondary: |
+          {% if is_state('binary_sensor.your_back_door_contact','on') %}
+
+            Outside access open
+
+          {% else %}
+
+            {% set last = states('input_datetime.puppy_last_outside') %}
+
+            {% if last in ['unknown','unavailable','none',''] %}
+
+              No data yet
+
+            {% else %}
+
+              {% set mins =
+                ((as_timestamp(now()) - as_timestamp(last)) / 60) | int
+              %}
+
+              {% if mins < 60 %}
+                {{ mins }} mins ago
+              {% else %}
+                {{ (mins / 60) | round(1) }} hrs ago
+              {% endif %}
+
+            {% endif %}
+          {% endif %}
+
+        icon: mdi:dog-side
+
+        icon_color: |
+          {% if is_state('binary_sensor.your_back_door_contact','on') %}
+
+            green
+
+          {% else %}
+
+            {% set last = states('input_datetime.puppy_last_outside') %}
+
+            {% if last in ['unknown','unavailable','none',''] %}
+
+              grey
+
+            {% else %}
+
+              {% set mins =
+                ((as_timestamp(now()) - as_timestamp(last)) / 60) | int
+              %}
+
+              {% if mins < 90 %}
+                green
+              {% elif mins < 120 %}
+                orange
+              {% else %}
+                red
+              {% endif %}
+
+            {% endif %}
+          {% endif %}
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      - type: custom:mushroom-template-card
+        primary: Toilet Status
+
+        secondary: |
+          {% set last = states('input_datetime.puppy_last_outside') %}
+
+          {% if is_state('binary_sensor.your_back_door_contact','on') %}
+
+            Garden access open
+
+          {% elif last in ['unknown','unavailable','none',''] %}
+
+            Waiting for outing
+
+          {% else %}
+
+            {% set mins =
+              ((as_timestamp(now()) - as_timestamp(last)) / 60) | int
+            %}
+
+            {% set remaining = 120 - mins %}
+
+            {% if remaining > 60 %}
+              Due in {{ (remaining / 60) | round(1) }} hrs
+            {% elif remaining > 0 %}
+              Due in {{ remaining }} mins
+            {% else %}
+              TOILET BREAK DUE
+            {% endif %}
+
+          {% endif %}
+
+        icon: mdi:timer-outline
+
+        icon_color: |
+          {% set last = states('input_datetime.puppy_last_outside') %}
+
+          {% if is_state('binary_sensor.your_back_door_contact','on') %}
+
+            green
+
+          {% elif last in ['unknown','unavailable','none',''] %}
+
+            grey
+
+          {% else %}
+
+            {% set mins =
+              ((as_timestamp(now()) - as_timestamp(last)) / 60) | int
+            %}
+
+            {% if mins < 90 %}
+              green
+            {% elif mins < 120 %}
+              orange
+            {% else %}
+              red
+            {% endif %}
+
+          {% endif %}
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      - type: custom:mushroom-template-card
+        entity: binary_sensor.your_garden_gate_contact
+        primary: Garden Gate
+
+        secondary: |
+          {% if is_state('binary_sensor.your_garden_gate_contact','on') %}
+            OPEN
+          {% else %}
+            CLOSED
+          {% endif %}
+
+        icon: |
+          {% if is_state('binary_sensor.your_garden_gate_contact','on') %}
+            mdi:gate-open
+          {% else %}
+            mdi:gate
+          {% endif %}
+
+        icon_color: |
+          {% if is_state('binary_sensor.your_garden_gate_contact','on') %}
+            red
+          {% else %}
+            green
+          {% endif %}
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      - type: custom:mushroom-template-card
+        entity: binary_sensor.your_back_door_contact
+        primary: Back Door
+
+        secondary: |
+          {% if is_state('binary_sensor.your_back_door_contact','on') %}
+            OPEN
+          {% else %}
+            CLOSED
+          {% endif %}
+
+        icon: |
+          {% if is_state('binary_sensor.your_back_door_contact','on') %}
+            mdi:door-open
+          {% else %}
+            mdi:door-closed
+          {% endif %}
+
+        icon_color: |
+          {% if is_state('binary_sensor.your_back_door_contact','on') %}
+            orange
+          {% else %}
+            green
+          {% endif %}
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+  # ==========================================================
+  # WEIGHT
+  # ==========================================================
+
+  - type: markdown
+    content: |
+      ## ⚖️ Weight
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+        }
+
+
+  - type: grid
+    columns: 2
+    square: false
+
+    cards:
+
+      - type: custom:mushroom-template-card
+        entity: input_number.puppy_weight
+        primary: Current Weight
+
+        secondary: |
+          {{ states('input_number.puppy_weight') }} kg
+
+        icon: mdi:scale
+        icon_color: orange
+
+        tap_action:
+          action: more-info
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      - type: custom:mushroom-template-card
+        entity: input_datetime.puppy_last_weighed
+        primary: Last Weighed
+
+        secondary: |
+          {% set d = states('input_datetime.puppy_last_weighed') %}
+
+          {% if d in ['unknown','unavailable','none',''] %}
+            Not recorded
+          {% else %}
+            {{ as_datetime(d).strftime('%d %b %Y') }}
+          {% endif %}
+
+        icon: mdi:calendar-clock
+        icon_color: orange
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+  # ==========================================================
+  # HEALTH
+  # ==========================================================
+
+  - type: markdown
+    content: |
+      ## 🩺 Health
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+        }
+
+
+  - type: grid
+    columns: 2
+    square: false
+
+    cards:
+
+      - type: custom:mushroom-template-card
+        primary: Last Vaccination
+
+        secondary: |
+          {% set d = states('input_datetime.puppy_last_vaccination') %}
+
+          {% if d in ['unknown','unavailable','none',''] %}
+            Not recorded
+          {% else %}
+            {{ as_datetime(d).strftime('%d %b %Y') }}
+          {% endif %}
+
+        icon: mdi:needle
+        icon_color: green
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      - type: custom:mushroom-template-card
+        entity: input_datetime.puppy_next_vaccination
+        primary: Next Vaccination
+
+        secondary: |
+          {% set d = states('input_datetime.puppy_next_vaccination') %}
+
+          {% if d in ['unknown','unavailable','none',''] %}
+            Date not set
+          {% else %}
+            {{ as_datetime(d).strftime('%d %b %Y') }}
+          {% endif %}
+
+        icon: mdi:calendar-alert
+
+        icon_color: |
+          {% set d = states('input_datetime.puppy_next_vaccination') %}
+
+          {% if d in ['unknown','unavailable','none',''] %}
+            grey
+          {% elif as_timestamp(d) < as_timestamp(now()) %}
+            red
+          {% elif as_timestamp(d) < as_timestamp(now()) + 604800 %}
+            orange
+          {% else %}
+            green
+          {% endif %}
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+  # ==========================================================
+  # TREATMENT
+  # ==========================================================
+
+  - type: custom:mushroom-template-card
+    primary: Parasite Treatment
+
+    secondary: |
+      {% set treatment = states('input_text.puppy_parasite_treatment') %}
+      {% set dose = states('input_text.puppy_parasite_dose') %}
+
+      {% if treatment in ['unknown','unavailable','none',''] %}
+        Treatment not entered
+      {% else %}
+        {{ treatment }}
+      {% endif %}
+
+      {% if dose not in ['unknown','unavailable','none',''] %}
+        • {{ dose }}
+      {% endif %}
+
+    icon: mdi:pill
+    icon_color: green
+
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+          --primary-text-color: #ffffff;
+          --secondary-text-color: rgba(255,255,255,0.72);
+        }
+
+
+  - type: grid
+    columns: 2
+    square: false
+
+    cards:
+
+      - type: custom:mushroom-template-card
+        entity: input_datetime.puppy_last_parasite_treatment
+        primary: Last Treatment
+
+        secondary: |
+          {% set d = states('input_datetime.puppy_last_parasite_treatment') %}
+
+          {% if d in ['unknown','unavailable','none',''] %}
+            Not recorded
+          {% else %}
+            {{ as_datetime(d).strftime('%d %b %Y') }}
+          {% endif %}
+
+        icon: mdi:calendar-check
+        icon_color: green
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+      - type: custom:mushroom-template-card
+        entity: input_datetime.puppy_next_parasite_treatment
+        primary: Next Treatment
+
+        secondary: |
+          {% set d = states('input_datetime.puppy_next_parasite_treatment') %}
+
+          {% if d in ['unknown','unavailable','none',''] %}
+            Date not set
+          {% else %}
+            {{ as_datetime(d).strftime('%d %b %Y') }}
+          {% endif %}
+
+        icon: mdi:calendar-alert
+
+        icon_color: |
+          {% set d = states('input_datetime.puppy_next_parasite_treatment') %}
+
+          {% if d in ['unknown','unavailable','none',''] %}
+            grey
+          {% elif as_timestamp(d) < as_timestamp(now()) %}
+            red
+          {% elif as_timestamp(d) < as_timestamp(now()) + 604800 %}
+            orange
+          {% else %}
+            green
+          {% endif %}
+
+        card_mod:
+          style: |
+            ha-card {
+              background: #002a5c !important;
+              color: #ffffff !important;
+              border: 1px solid rgba(254,77,0,0.40) !important;
+              --primary-text-color: #ffffff;
+              --secondary-text-color: rgba(255,255,255,0.72);
+            }
+
+
+  # ==========================================================
+  # MICROCHIP
+  # ==========================================================
+
+  - type: custom:mushroom-template-card
+    entity: input_text.puppy_microchip
+
+    primary: Microchip
+
+    secondary: |
+      Registered
+      Tap to view number
+
+    icon: mdi:identifier
+    icon_color: green
+
+    tap_action:
+      action: more-info
+
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+          --primary-text-color: #ffffff;
+          --secondary-text-color: rgba(255,255,255,0.72);
+        }
+
+
+  # ==========================================================
+  # PUPPY CAMERA
+  # ==========================================================
+
+  - type: markdown
+    content: |
+      ## 📹 Puppy Cam
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+        }
+
+
+  - type: custom:advanced-camera-card
+
+    cameras:
+      - camera_entity: camera.your_puppy_camera
+        live_provider: auto
+
+    card_mod:
+      style: |
+        ha-card {
+          background: #002a5c !important;
+          border: 1px solid rgba(254,77,0,0.55) !important;
+          box-shadow: 0 0 12px rgba(254,77,0,0.10);
+          overflow: hidden;
+        }
