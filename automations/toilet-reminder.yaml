@@ -1,1 +1,65 @@
-automations/toilet-reminder.yaml
+# ============================================================
+# PuppyOS - Toilet / Garden Reminder
+# ============================================================
+#
+# PURPOSE:
+# Reminds the household to let the puppy outside if the garden
+# access door has been closed for 2 hours.
+#
+# HOW IT WORKS:
+#
+# 1. A separate automation records the time when the puppy's
+#    garden access door CLOSES.
+#
+# 2. This automation watches that timestamp.
+#
+# 3. If 2 hours pass with the door still closed, a spoken
+#    reminder is played.
+#
+# 4. If the door is open, no reminder is given because the
+#    puppy already has access outside.
+#
+# 5. Reminders only operate between 10:00 and 22:00.
+#
+# REQUIRED HELPER:
+#
+# input_datetime.puppy_last_outside
+#
+# REQUIRED SENSOR:
+#
+# binary_sensor.your_back_door_contact
+#
+# REQUIRED SPEAKER:
+#
+# media_player.your_speaker
+#
+# You MUST replace the example entity IDs with your own.
+#
+# ============================================================
+
+
+# ============================================================
+# AUTOMATION 1
+# RECORD WHEN GARDEN ACCESS ENDS
+# ============================================================
+
+alias: PuppyOS - Record Last Outside
+description: >
+  Records the time when the puppy's garden access door closes.
+
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.your_back_door_contact
+    from: "on"
+    to: "off"
+
+conditions: []
+
+actions:
+  - action: input_datetime.set_datetime
+    target:
+      entity_id: input_datetime.puppy_last_outside
+    data:
+      timestamp: "{{ now().timestamp() }}"
+
+mode: restart
