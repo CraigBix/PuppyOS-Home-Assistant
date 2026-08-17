@@ -166,6 +166,24 @@ A camera is completely optional.
 
 # 📱 The PuppyOS Dashboard
 
+## PuppyOS Mobile Dashboard
+
+Here's an example of PuppyOS running as a mobile Home Assistant dashboard:
+
+![PuppyOS Mobile Dashboard](images/New%20Puppy%20Dashboard%20Image.png)
+
+The dashboard brings feeding, outside access, safety, weight, vaccinations, parasite treatments and other puppy information together in one place.
+
+## Automatic Feeding Detection
+
+The clever bit is surprisingly simple: a small contact sensor attached to the puppy's food container.
+
+![PuppyOS Food Container Sensor](images/Dog_Feeding_Container_with_Sensor.jpeg)
+
+When the container is opened, Home Assistant detects it automatically. PuppyOS can then record the meal, update the dashboard and warn another household member if they try to feed the puppy again too soon.
+
+**No buttons. No manual logging. Just feed the puppy.**
+
 The supplied dashboard is designed to work particularly well on a phone.
 
 It can show at a glance:
