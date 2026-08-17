@@ -1,0 +1,6 @@
+title: PuppyOS for Home Assistant
+description: Smart-home automation for puppies, busy households and forgetful humans.
+theme: jekyll-theme-cayman
+show_downloads: true
+github:
+  is_project_page: true
