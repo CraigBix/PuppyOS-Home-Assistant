@@ -51,7 +51,20 @@ Examples include:
 - Google / Nest speakers
 - Other Home Assistant compatible media players
 
----
+### Recommended Food Container Sensor
+
+We use a small **Aqara Door & Window Sensor** on the puppy food container.
+
+It's particularly well suited to this job because the sensor is tiny, battery powered and simply sticks to the food container and lid. Opening the lid changes the contact state, which PuppyOS uses to detect a feeding event.
+
+**Recommended:** Aqara Door & Window Sensor  
+**UK Amazon:** [View on Amazon](https://link.amazon/B0j8tTizM)
+
+> **Affiliate disclosure:** This is an affiliate link. If you buy through it, the PuppyOS project may receive a small commission at no additional cost to you.
+
+**Important:** The standard Zigbee Aqara Door & Window Sensor requires a compatible Aqara hub. If you don't already use Aqara, you can use any Home Assistant-compatible contact sensor instead.
+
+PuppyOS does not require Aqara specifically. All it needs is a contact sensor that appears in Home Assistant as a `binary_sensor`.
 
 # 2. Optional Hardware
 
