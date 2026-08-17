@@ -4,37 +4,23 @@
 
 > **Don't remember to record things. Make your house record them for you.**
 
-PuppyOS is a collection of Home Assistant automations and dashboard components designed to reduce the everyday mental load of looking after a puppy.
+PuppyOS is a collection of Home Assistant automations and dashboards designed to reduce the everyday mental load of looking after a puppy.
 
-It started with a very ordinary problem:
+It started with one very ordinary question:
 
 > **"Has someone already fed the puppy?"**
 
-In a household where more than one person looks after a dog, surprisingly simple questions can become difficult:
+From there came a simple idea: if the house can reliably observe an everyday action, don't make a human remember to log it.
 
-- Has he had breakfast?
-- When was he last fed?
-- Has somebody else already fed him?
-- When did he last go outside?
-- Is the garden gate shut?
-- When is his next vaccination?
-- When did we last give his parasite treatment?
-- What did he weigh last time?
-- Where are the insurance details when we actually need them?
-
-PuppyOS lets **Home Assistant answer those questions for you**.
+PuppyOS can track feeding, help prevent accidental double-feeding, remind you about missed meals and toilet breaks, warn when a garden gate is open, and bring useful puppy information together in Home Assistant.
 
 ---
 
 # 🐶 What PuppyOS Does
 
-PuppyOS currently includes:
+## 🍽️ Automatic Feeding Tracking
 
-### 🍽️ Automatic Feeding Tracking
-
-Put a small contact sensor on the puppy food container.
-
-When the container opens, PuppyOS can automatically record:
+Put a small contact sensor on the puppy food container. When the container opens, PuppyOS can automatically record:
 
 - Breakfast
 - Lunch
@@ -42,29 +28,19 @@ When the container opens, PuppyOS can automatically record:
 - Last feeding time
 - Last meal
 
-No phone app to open.
-
-No button to press.
-
-No spreadsheet to remember to update.
+No app to open. No button to press. No spreadsheet to update.
 
 **Feed the puppy normally and the house records it.**
 
----
+## 🚨 Double-Feeding Protection
 
-### 🚨 Double-Feeding Protection
-
-If somebody opens the food container again too soon after a recorded meal, PuppyOS can announce through a smart speaker:
+If the food container is opened again too soon after a recorded meal, PuppyOS can announce through a smart speaker:
 
 > **The puppy has already been fed. Please don't feed them again yet.**
 
-This is particularly useful in households where more than one person shares feeding duties.
+The example configuration uses a **150-minute minimum interval**, which you can change for your own feeding schedule.
 
-The example configuration uses a **150-minute minimum interval**, which can be changed to suit your own feeding schedule.
-
----
-
-### ⏰ Missed Meal Reminders
+## ⏰ Missed Meal Reminders
 
 The example three-meal configuration checks for:
 
@@ -74,17 +50,11 @@ The example three-meal configuration checks for:
 | Lunch | 15:00 |
 | Dinner | 19:30 |
 
-If the expected meal has not been recorded, PuppyOS can announce that the puppy needs feeding.
+If the expected meal has not been recorded, PuppyOS can announce a reminder. All times are configurable.
 
-The times are completely configurable.
+## 🚪 Toilet / Garden Tracking
 
----
-
-### 🚪 Toilet / Garden Tracking
-
-A contact sensor on the garden access door lets PuppyOS record when outside access ends.
-
-The dashboard can then show:
+A contact sensor on the garden access door lets PuppyOS record when outside access ends. The dashboard can then show:
 
 - How long ago the puppy last had garden access
 - How long remains until the next suggested toilet break
@@ -92,11 +62,9 @@ The dashboard can then show:
 
 The example configuration uses a **two-hour reminder period**.
 
----
+## ⚠️ Garden Gate Safety
 
-### ⚠️ Garden Gate Safety
-
-PuppyOS can combine two ordinary contact sensors to create a useful safety system.
+PuppyOS can combine two ordinary contact sensors:
 
 ```text
 Garden access door opens
@@ -106,77 +74,34 @@ Garden gate is already open
 WARNING
 ```
 
-A smart speaker can immediately announce:
+A smart speaker can immediately announce that the gate is open. This is an extra layer of protection, not a replacement for proper supervision or a secure garden.
 
-> **Warning. The garden gate is open. Please close the gate before letting the puppy outside.**
+## ⚖️ Weight, Vaccinations & Treatments
 
-This does not replace proper supervision or a secure garden, but it provides another useful layer of protection.
+The dashboards can also display information such as:
 
----
-
-### ⚖️ Puppy Weight Tracking
-
-Record your puppy's current weight and the date they were weighed.
-
-Because Home Assistant keeps entity history, this can also provide the foundation for a puppy growth graph.
-
-This becomes particularly useful while a puppy is growing rapidly.
-
----
-
-### 💉 Vaccinations & Treatments
-
-The dashboard can keep important health information together, including:
-
-- Last vaccination
-- Next vaccination
+- Puppy weight and last weighed date
+- Last and next vaccination
 - Vaccination details
 - Parasite treatment
-- Treatment dose
-- Last treatment date
-- Next treatment date
-
-PuppyOS does **not** calculate veterinary medication doses.
-
-Always follow your vet's advice and the instructions supplied with veterinary medicines.
-
----
-
-### 🏥 Vet, Microchip & Insurance Information
-
-The dashboard can provide quick access to:
-
-- Veterinary practice details
-- Vet telephone number
+- Last and next treatment dates
 - Microchip information
-- Insurance details
-- Insurance documents
 
-Instead of hunting through emails or paperwork when something happens, important information can be available from the same puppy dashboard.
+PuppyOS does **not** calculate veterinary medication doses. Always follow your vet's advice and the instructions supplied with veterinary medicines.
 
----
+## 📹 Puppy Camera
 
-### 📹 Puppy Camera
-
-If you already have a Home Assistant-compatible camera, PuppyOS can include its live feed directly on the dashboard.
-
-A camera is completely optional.
+If you already have a Home Assistant-compatible camera, PuppyOS can include its live feed on the dashboard. A camera is completely optional.
 
 ---
-
-# 📱 The PuppyOS Dashboard
 
 # 📊 Dashboards
 
-PuppyOS now includes two dashboard layouts using the same helpers, sensors and automations.
-
-Choose the one that best fits where you use Home Assistant.
+PuppyOS includes **two dashboard layouts** using the same helpers, sensors and automations.
 
 ## 📱 Mobile Dashboard
 
-Designed for quick checks on a phone.
-
-Prioritises:
+Designed for quick checks on a phone. It prioritises:
 
 - Breakfast / Lunch / Dinner
 - Last fed
@@ -193,15 +118,13 @@ Prioritises:
 
 👉 [View the Mobile Dashboard YAML](dashboards/puppyos-mobile.yaml)
 
----
+![PuppyOS Mobile Dashboard](images/New%20Puppy%20Dashboard%20Image.png)
 
 ## 🖥️ Desktop / Tablet Dashboard
 
-Designed for larger screens, tablets and wall displays.
+Designed for larger screens, tablets and wall displays. It includes:
 
-Includes:
-
-- Three-column control-centre layout
+- Multi-column control-centre layout
 - Larger puppy photo
 - Meal tracking
 - Outside and safety status
@@ -209,106 +132,21 @@ Includes:
 - Weight history graph
 - Vaccinations
 - Treatment information
-- Microchip
-- Vet / insurance / document shortcuts
+- Microchip information
 
 👉 [View the Desktop / Tablet Dashboard YAML](dashboards/puppyos-desktop.yaml)
 
+You can install the mobile dashboard, desktop/tablet dashboard, both, or neither if you only want the automations.
+
+The dashboard should mostly **report what the house has already observed**, rather than becoming another system you have to remember to maintain.
+
 ---
 
-Both dashboards use the same PuppyOS automations.
+# 🏠 Automatic Feeding Detection
 
-You can install:
-
-- Mobile only
-- Desktop / tablet only
-- Both
-- Neither, if you only want the automations
-
-Here's an example of PuppyOS running as a mobile Home Assistant dashboard:
-
-![PuppyOS Mobile Dashboard](images/New%20Puppy%20Dashboard%20Image.png)
-
-The dashboard brings feeding, outside access, safety, weight, vaccinations, parasite treatments and other puppy information together in one place.
-
-## Automatic Feeding Detection
-
-The clever bit is surprisingly simple: a small contact sensor attached to the puppy's food container.
+The clever bit is deliberately simple: the puppy's normal food container **is the button**.
 
 ![PuppyOS Food Container Sensor](images/Dog_Feeding_Container_with_Sensor.jpeg)
-
-When the container is opened, Home Assistant detects it automatically. PuppyOS can then record the meal, update the dashboard and warn another household member if they try to feed the puppy again too soon.
-
-**No buttons. No manual logging. Just feed the puppy.**
-
-The supplied dashboard is designed to work particularly well on a phone.
-
-It can show at a glance:
-
-```text
-🐾 PUPPY
-
-Outside & Safety
-├── Last Outside
-├── Toilet Status
-├── Garden Gate
-└── Back Door
-
-Food
-├── Breakfast
-├── Lunch
-├── Dinner
-├── Last Fed
-└── Food Container
-
-Health
-├── Weight
-├── Vaccinations
-├── Treatments
-└── Microchip
-
-Information
-├── Vet
-├── Insurance
-└── Documents
-
-Camera
-└── Live Puppy Cam
-```
-
-The idea is not to create another system that needs constant administration.
-
-The dashboard should mostly **report what the house has already observed**.
-
----
-
-# 🧠 Why Build This?
-
-Puppy care contains lots of small repetitive tasks.
-
-Each one is easy.
-
-Remembering **all of them**, while also dealing with work, children, appointments, sleep deprivation and normal life, is where things become harder.
-
-This can be especially useful for people who find repetitive tracking or prospective-memory tasks difficult, including some people with ADHD (like me!)
-
-PuppyOS is not an ADHD treatment or medical product.
-
-It simply applies a useful home-automation principle:
-
-> **If a sensor can reliably observe an everyday action, don't make a human remember to log it.**
-
-That principle works whether your household is neurodivergent, extremely busy, wonderfully chaotic, or simply tired because somebody brought home a puppy.
-
----
-
-# 🏠 How Feeding Detection Works
-
-There is deliberately no special PuppyOS feeding button.
-
-The puppy's normal food container **is the button**.
-
-A small contact sensor detects the lid opening.
 
 ```text
           FOOD CONTAINER
@@ -330,8 +168,6 @@ A small contact sensor detects the lid opening.
                     Speaker warning
 ```
 
-This is what makes the system useful in everyday life.
-
 Nobody needs to remember to interact with PuppyOS before or after feeding.
 
 ---
@@ -339,8 +175,6 @@ Nobody needs to remember to interact with PuppyOS before or after feeding.
 # 🛠️ What You Need
 
 ## Minimum Setup
-
-You will need:
 
 - Home Assistant
 - A contact sensor for the puppy food container
@@ -357,39 +191,31 @@ For spoken alerts:
 
 Everything else is optional.
 
+For more hardware information, see the **[PuppyOS Hardware Guide](hardware.md)**.
+
 ---
 
 # ⭐ Recommended Food Container Sensor
 
-The original PuppyOS setup uses a small **Aqara Door & Window Sensor** on the food container.
-
-Its compact size makes this type of sensor particularly convenient for attaching to a food tub and lid.
+The original PuppyOS setup uses a small **Aqara Door & Window Sensor** on the food container. Its compact size makes this type of sensor particularly convenient for attaching to a food tub and lid.
 
 **UK Amazon:** [View the Aqara sensor on Amazon](https://link.amazon/B0j8tTizM)
 
 > **Affiliate disclosure:** The link above is an affiliate link. If you purchase through it, the PuppyOS project may receive a small commission at no additional cost to you.
 
-### Important
+PuppyOS does **not** require Aqara. You can use any suitable contact sensor that Home Assistant exposes as a `binary_sensor`.
 
-PuppyOS does **not** require Aqara.
-
-You can use any suitable contact sensor that Home Assistant exposes as a `binary_sensor`.
-
-Depending on the Aqara model you choose and your existing smart-home setup, additional compatible hub, Zigbee, Matter or Thread hardware may be required.
-
-Check compatibility with your Home Assistant installation before purchasing.
+Depending on the Aqara model and your existing smart-home setup, additional compatible hub, Zigbee, Matter or Thread hardware may be required. Check compatibility with your Home Assistant installation before purchasing.
 
 ---
 
 # 🚀 Getting Started
 
-If you're new to Home Assistant, don't start by copying random bits of YAML and hoping for the best.
-
-Use the setup guide:
+If you're new to Home Assistant, use the step-by-step guide:
 
 ### 👉 [Read the PuppyOS Setup Guide](setup-guide.md)
 
-The recommended order is:
+Recommended order:
 
 1. Create the required Home Assistant Helpers
 2. Identify your contact sensor entity IDs
@@ -400,78 +226,25 @@ The recommended order is:
 7. Install the toilet reminder
 8. Install gate safety
 9. Test everything
-10. Add the dashboard
+10. Add your chosen dashboard
 
 ---
 
 # 🤖 Automations
 
-The current PuppyOS automation modules are:
-
-### 🍽️ Feeding Tracker
-
-[View `feeding.yaml`](automations/feeding.yaml)
-
-Automatically records Breakfast, Lunch and Dinner from the food-container contact sensor and provides double-feeding protection.
-
----
-
-### ⏰ Missed Meal Reminders
-
-[View `meal-reminders.yaml`](automations/meal-reminders.yaml)
-
-Checks whether expected meals have been recorded and can announce reminders through a smart speaker.
-
----
-
-### 🚪 Outside Tracking
-
-[View `toilet-reminder.yaml`](automations/toilet-reminder.yaml)
-
-Records when garden access ends.
-
----
-
-### 🚽 Toilet Reminder
-
-[View `toilet-reminder-alert.yaml`](automations/toilet-reminder-alert.yaml)
-
-Provides a reminder after the configured period without garden access.
-
----
-
-### ⚠️ Garden Gate Safety
-
-[View `gate-safety.yaml`](automations/gate-safety.yaml)
-
-Warns when the puppy's garden access door opens while the garden gate is already open.
-
----
-
-# 📊 Dashboard
-
-The example dashboard configuration is here:
-
-### 👉 [View the PuppyOS Dashboard YAML](puppy-dashboard.yaml)
-
-The dashboard currently uses several Home Assistant custom cards:
-
-- Mushroom Cards
-- Button Card
-- Advanced Camera Card
-- Card Mod
-
-These are commonly installed using HACS.
-
-The automations themselves do **not** require the dashboard.
+| Module | What it does |
+|---|---|
+| [Feeding Tracker](automations/feeding.yaml) | Records meals from the food-container sensor and provides double-feeding protection |
+| [Missed Meal Reminders](automations/meal-reminders.yaml) | Checks whether expected meals have been recorded |
+| [Outside Tracking](automations/toilet-reminder.yaml) | Records when garden access ends |
+| [Toilet Reminder](automations/toilet-reminder-alert.yaml) | Reminds the household after the configured period without garden access |
+| [Garden Gate Safety](automations/gate-safety.yaml) | Warns when the garden access door opens while the gate is already open |
 
 ---
 
 # 🔧 Example Entity IDs
 
-PuppyOS uses obvious placeholders in the public YAML.
-
-For example:
+The public YAML uses obvious placeholders such as:
 
 ```yaml
 binary_sensor.your_food_container_contact
@@ -484,23 +257,35 @@ camera.your_puppy_camera
 
 Replace these with entities from your own Home Assistant installation.
 
-The Helpers use examples such as:
+Helpers use examples such as:
 
 ```yaml
 input_datetime.puppy_last_fed
 input_datetime.puppy_breakfast_fed
 input_datetime.puppy_lunch_fed
 input_datetime.puppy_dinner_fed
-
 input_text.puppy_last_meal
-
 input_datetime.puppy_last_outside
-
 input_number.puppy_weight
 input_datetime.puppy_last_weighed
 ```
 
-The full list and creation instructions are in the [Setup Guide](setup-guide.md).
+The complete helper list and creation instructions are in the **[Setup Guide](setup-guide.md)**.
+
+---
+
+# 🧩 Dashboard Requirements
+
+The example dashboards use several Home Assistant custom cards:
+
+- Mushroom Cards
+- Button Card
+- Advanced Camera Card
+- Card Mod
+
+These are commonly installed through HACS.
+
+The PuppyOS automations themselves do **not** require either dashboard.
 
 ---
 
@@ -508,11 +293,19 @@ The full list and creation instructions are in the [Setup Guide](setup-guide.md)
 
 The initial PuppyOS feeding system is designed around a young puppy eating **three meals per day**.
 
-Puppies don't stay puppies forever.
+As feeding requirements change, the automation can be adapted for two meals per day. Always base your puppy's actual feeding schedule and quantity on appropriate veterinary or food-manufacturer guidance rather than the example PuppyOS timings.
 
-As feeding requirements change, the automation can be adapted for two meals per day.
+---
 
-Always base your puppy's actual feeding schedule and quantity on appropriate veterinary or food-manufacturer guidance rather than the example PuppyOS timings.
+# 🧠 Why Build This?
+
+Puppy care contains lots of small repetitive tasks. Each one is easy. Remembering all of them while also dealing with work, family, appointments, sleep deprivation and normal life is where things become harder.
+
+This can be especially useful for people who find repetitive tracking or prospective-memory tasks difficult, including some people with ADHD.
+
+PuppyOS is not an ADHD treatment or medical product. It simply applies a useful home-automation principle:
+
+> **If a sensor can reliably observe an everyday action, don't make a human remember to log it.**
 
 ---
 
@@ -532,7 +325,7 @@ Before publishing your own configuration or screenshots, check for:
 - Personal names
 - Private documents
 
-The public PuppyOS files deliberately use generic placeholders instead of details from the original installation.
+The public PuppyOS files deliberately use generic placeholders instead of private details from the original installation.
 
 ---
 
@@ -540,21 +333,9 @@ The public PuppyOS files deliberately use generic placeholders instead of detail
 
 PuppyOS is a convenience, organisation and reminder project.
 
-It is **not** a replacement for:
+It is **not** a replacement for responsible pet supervision, veterinary advice, secure fencing and gates, correct feeding guidance, correct medication instructions or training.
 
-- Responsible pet supervision
-- Veterinary advice
-- Secure fencing and gates
-- Correct feeding guidance
-- Correct medication instructions
-- Training
-- Common sense
-
-Smart-home devices can fail.
-
-Batteries go flat.
-
-Wi-Fi disappears at precisely the moment it considers funniest.
+Smart-home devices can fail. Batteries go flat. Wi-Fi disappears at precisely the moment it considers funniest.
 
 Always physically verify anything important to your puppy's health or safety.
 
@@ -568,56 +349,27 @@ The original problem wasn't particularly technical:
 
 > **"Has Duke been fed?"**
 
-Two people could both assume the other person had done it.
+Two people could both assume the other person had done it, or both could feed him. A simple contact sensor on the food container solved the logging problem without asking anybody to change how they fed the puppy.
 
-Or both could feed him.
-
-A simple contact sensor on the food container solved the logging problem without asking anybody to change how they fed the puppy.
-
-That led to another question:
-
-> When was he last outside?
-
-Then:
-
-> What if the side gate is open?
+That led to another question: when was he last outside? Then: what if the side gate is open?
 
 And, inevitably, a small feeding sensor became an increasingly elaborate puppy control centre.
 
-PuppyOS is the generic, privacy-safe version of that system.
-
-The goal is to share the useful bits so other households can build their own version without starting from scratch.
+PuppyOS is the generic, privacy-safe version of that system, shared so other households can build their own without starting from scratch.
 
 ---
 
 # 🤝 Contributing
 
-PuppyOS is an early project and suggestions are welcome.
-
-If you:
-
-- Improve an automation
-- Find a bug
-- Support different hardware
-- Adapt PuppyOS for two meals per day
-- Create a better dashboard card
-- Find a simpler way of doing something
-
-please consider opening an Issue or Pull Request.
-
-This project should become better through real households actually using it.
+PuppyOS is an early project and suggestions are welcome. If you improve an automation, find a bug, support different hardware, simplify something or create a better dashboard card, please consider opening an Issue or Pull Request.
 
 ---
 
 # 💡 Ideas for Future Versions
 
-Possible future additions include:
-
 - Two-meal feeding mode
 - Puppy growth charts
-- Weight history
-- Medication reminders
-- Vaccination reminders
+- Medication and vaccination reminders
 - Walk tracking
 - Training logs
 - Grooming reminders
@@ -644,9 +396,7 @@ His QA methodology remains proprietary.
 
 PuppyOS is shared freely for other Home Assistant and puppy-owning households to use and adapt.
 
-Some hardware links may be affiliate links. These will always be clearly identified.
-
-Using an affiliate link may provide a small commission to support the project without increasing the price you pay.
+Some hardware links may be affiliate links. These will always be clearly identified. Using an affiliate link may provide a small commission to support the project without increasing the price you pay.
 
 ---
 
@@ -656,9 +406,7 @@ PuppyOS is open-source software released under the **MIT License**.
 
 You are free to use, copy, modify and redistribute PuppyOS, including adapting it for your own puppy, household or Home Assistant setup.
 
-See the full [MIT License](LICENSE) for details.
-
-If you build something useful from PuppyOS, we'd love to hear about it.
+See the full **[MIT License](LICENSE)** for details.
 
 ---
 
