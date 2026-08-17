@@ -166,7 +166,64 @@ A camera is completely optional.
 
 # 📱 The PuppyOS Dashboard
 
-## PuppyOS Mobile Dashboard
+# 📊 Dashboards
+
+PuppyOS now includes two dashboard layouts using the same helpers, sensors and automations.
+
+Choose the one that best fits where you use Home Assistant.
+
+## 📱 Mobile Dashboard
+
+Designed for quick checks on a phone.
+
+Prioritises:
+
+- Breakfast / Lunch / Dinner
+- Last fed
+- Food container
+- Last outside
+- Toilet status
+- Garden gate
+- Back door
+- Weight
+- Vaccinations
+- Treatments
+- Microchip
+- Puppy camera
+
+👉 [View the Mobile Dashboard YAML](dashboards/puppyos-mobile.yaml)
+
+---
+
+## 🖥️ Desktop / Tablet Dashboard
+
+Designed for larger screens, tablets and wall displays.
+
+Includes:
+
+- Three-column control-centre layout
+- Larger puppy photo
+- Meal tracking
+- Outside and safety status
+- Larger live camera
+- Weight history graph
+- Vaccinations
+- Treatment information
+- Microchip
+- Vet / insurance / document shortcuts
+
+👉 [View the Desktop / Tablet Dashboard YAML](dashboards/puppyos-desktop.yaml)
+
+---
+
+Both dashboards use the same PuppyOS automations.
+
+You can install:
+
+- Mobile only
+- Desktop / tablet only
+- Both
+- Neither, if you only want the automations
 
 Here's an example of PuppyOS running as a mobile Home Assistant dashboard:
 
