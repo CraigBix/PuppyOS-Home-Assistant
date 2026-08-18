@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://craigbix.github.io/PuppyOS-Home-Assistant/sitemap.xml
