@@ -1,6 +1,14 @@
 title: PuppyOS for Home Assistant
-description: Smart-home automation for puppies, busy households and forgetful humans.
+description: Home Assistant puppy feeding tracker, dog feeding automation, toilet reminders, garden gate safety and pet-care dashboards for busy households.
+url: https://craigbix.github.io
+baseurl: /PuppyOS-Home-Assistant
+repository: CraigBix/PuppyOS-Home-Assistant
 theme: jekyll-theme-cayman
 show_downloads: true
+lang: en-GB
+author: Craig Bix
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
 github:
   is_project_page: true
