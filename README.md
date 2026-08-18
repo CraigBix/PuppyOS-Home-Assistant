@@ -1,18 +1,14 @@
 # 🐾 PuppyOS for Home Assistant
 
-### Smart-home automation for puppies, busy households and forgetful humans.
+### Home Assistant puppy feeding tracker, dog feeding automation and pet-care dashboard for busy households.
 
 > **Don't remember to record things. Make your house record them for you.**
 
-PuppyOS is a collection of Home Assistant automations and dashboards designed to reduce the everyday mental load of looking after a puppy.
+PuppyOS is an open-source **Home Assistant puppy and dog care system** built around simple sensors, automations and dashboards. It can automatically track puppy feeding, help prevent accidental double-feeding, remind you about missed meals and toilet breaks, warn when a garden gate is open, and keep useful pet-care information together in Home Assistant.
 
-It started with one very ordinary question:
+If you have ever asked **“Has someone already fed the puppy?”**, PuppyOS is designed for exactly that problem.
 
-> **"Has someone already fed the puppy?"**
-
-From there came a simple idea: if the house can reliably observe an everyday action, don't make a human remember to log it.
-
-PuppyOS can track feeding, help prevent accidental double-feeding, remind you about missed meals and toilet breaks, warn when a garden gate is open, and bring useful puppy information together in Home Assistant.
+It is especially useful for shared households, busy families and people who want fewer repetitive things to remember.
 
 ---
 
@@ -118,7 +114,7 @@ Designed for quick checks on a phone. It prioritises:
 
 👉 [View the Mobile Dashboard YAML](dashboards/puppyos-mobile.yaml)
 
-![PuppyOS Mobile Dashboard](images/New%20Puppy%20Dashboard%20Image.png)
+![PuppyOS mobile Home Assistant puppy dashboard](images/New%20Puppy%20Dashboard%20Image.png)
 
 ## 🖥️ Desktop / Tablet Dashboard
 
@@ -146,7 +142,7 @@ The dashboard should mostly **report what the house has already observed**, rath
 
 The clever bit is deliberately simple: the puppy's normal food container **is the button**.
 
-![PuppyOS Food Container Sensor](images/Dog_Feeding_Container_with_Sensor.jpeg)
+![Contact sensor on a puppy food container for Home Assistant feeding tracking](images/Dog_Feeding_Container_with_Sensor.jpeg)
 
 ```text
           FOOD CONTAINER
@@ -294,6 +290,21 @@ The PuppyOS automations themselves do **not** require either dashboard.
 The initial PuppyOS feeding system is designed around a young puppy eating **three meals per day**.
 
 As feeding requirements change, the automation can be adapted for two meals per day. Always base your puppy's actual feeding schedule and quantity on appropriate veterinary or food-manufacturer guidance rather than the example PuppyOS timings.
+
+---
+
+# 🔎 Search Terms & Use Cases
+
+PuppyOS may be useful if you are looking for:
+
+- Home Assistant puppy feeding tracker
+- Home Assistant dog feeding automation
+- Puppy feeding reminder using a contact sensor
+- Home Assistant pet care dashboard
+- Dog feeding reminder for a shared household
+- Smart-home puppy toilet reminder
+- Garden gate warning automation for pets
+- ADHD-friendly pet-care reminders
 
 ---
 
